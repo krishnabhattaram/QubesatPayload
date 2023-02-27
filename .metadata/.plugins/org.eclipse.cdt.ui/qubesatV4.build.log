@@ -1,0 +1,79 @@
+16:06:41 **** Incremental Build of configuration Debug for project qubesatV4 ****
+make -j7 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m0plus -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32L073xx -c -I../Core/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc -I../Drivers/STM32L0xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32L0xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'main':
+../Core/Src/main.c:231:3: warning: implicit declaration of function 'Initialize_Microwave_Generator' [-Wimplicit-function-declaration]
+  231 |   Initialize_Microwave_Generator();
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:235:3: warning: implicit declaration of function 'sendBytes' [-Wimplicit-function-declaration]
+  235 |   sendBytes(0x4DB8, 0b00101000);
+      |   ^~~~~~~~~
+../Core/Src/main.c:321:7: warning: implicit declaration of function 'Set_VCO_Frequency' [-Wimplicit-function-declaration]
+  321 |       Set_VCO_Frequency(set_freq);
+      |       ^~~~~~~~~~~~~~~~~
+../Core/Src/main.c:362:38: warning: implicit declaration of function 'malloc' [-Wimplicit-function-declaration]
+  362 |   uint16_t *data_array = (uint16_t*) malloc(3000 * sizeof(uint16_t));
+      |                                      ^~~~~~
+../Core/Src/main.c:362:38: warning: incompatible implicit declaration of built-in function 'malloc'
+../Core/Src/main.c:50:1: note: include '<stdlib.h>' or provide a declaration of 'malloc'
+   49 | #include <stdio.h>
+  +++ |+#include <stdlib.h>
+   50 | 
+../Core/Src/main.c:161:11: warning: unused variable 'addr' [-Wunused-variable]
+  161 |  uint16_t addr;
+      |           ^~~~
+../Core/Src/main.c:159:11: warning: unused variable 'freq' [-Wunused-variable]
+  159 |  uint16_t freq;
+      |           ^~~~
+../Core/Src/main.c:157:7: warning: unused variable 'spi_buf' [-Wunused-variable]
+  157 |  char spi_buf[20];
+      |       ^~~~~~~
+../Core/Src/main.c:147:11: warning: variable 'photodiode_in' set but not used [-Wunused-but-set-variable]
+  147 |  uint16_t photodiode_in;
+      |           ^~~~~~~~~~~~~
+../Core/Src/main.c: At top level:
+../Core/Src/main.c:832:6: warning: conflicting types for 'Set_VCO_Frequency'
+  832 | void Set_VCO_Frequency(int freq) {
+      |      ^~~~~~~~~~~~~~~~~
+../Core/Src/main.c:321:7: note: previous implicit declaration of 'Set_VCO_Frequency' was here
+  321 |       Set_VCO_Frequency(set_freq);
+      |       ^~~~~~~~~~~~~~~~~
+../Core/Src/main.c: In function 'Set_VCO_Frequency':
+../Core/Src/main.c:846:31: warning: implicit declaration of function 'pow' [-Wimplicit-function-declaration]
+  846 |  int frac_data = frac_value * pow(2,24);
+      |                               ^~~
+../Core/Src/main.c:846:31: warning: incompatible implicit declaration of built-in function 'pow'
+../Core/Src/main.c:50:1: note: include '<math.h>' or provide a declaration of 'pow'
+   49 | #include <stdio.h>
+  +++ |+#include <math.h>
+   50 | 
+../Core/Src/main.c:840:6: warning: unused variable 'frac_mod' [-Wunused-variable]
+  840 |  int frac_mod = freq % xtal;
+      |      ^~~~~~~~
+../Core/Src/main.c: At top level:
+../Core/Src/main.c:878:6: warning: conflicting types for 'sendBytes'
+  878 | void sendBytes(int data, uint8_t addressByte) {
+      |      ^~~~~~~~~
+../Core/Src/main.c:235:3: note: previous implicit declaration of 'sendBytes' was here
+  235 |   sendBytes(0x4DB8, 0b00101000);
+      |   ^~~~~~~~~
+../Core/Src/main.c:910:6: warning: conflicting types for 'Initialize_Microwave_Generator'
+  910 | void Initialize_Microwave_Generator(void) {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+../Core/Src/main.c:231:3: note: previous implicit declaration of 'Initialize_Microwave_Generator' was here
+  231 |   Initialize_Microwave_Generator();
+      |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "qubesatV4.elf" @"objects.list"   -mcpu=cortex-m0plus -T"/Users/krishnabhattaram/STM32CubeIDE/workspace_1.9.0/qubesatV4/STM32L073RZTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="qubesatV4.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: qubesatV4.elf
+ 
+arm-none-eabi-size   qubesatV4.elf 
+arm-none-eabi-objdump -h -S  qubesatV4.elf  > "qubesatV4.list"
+   text	   data	    bss	    dec	    hex	filename
+  24644	    120	   1904	  26668	   682c	qubesatV4.elf
+Finished building: default.size.stdout
+ 
+Finished building: qubesatV4.list
+ 
+
+16:06:43 Build Finished. 0 errors, 15 warnings. (took 1s.192ms)
+
