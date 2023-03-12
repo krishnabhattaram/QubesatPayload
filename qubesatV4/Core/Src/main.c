@@ -210,6 +210,7 @@ void measure_at_frequency(int frequency) {
 
 void printf_to_uart(char *format, ...) {
     char print_buf[100]; // allocate a larger buffer
+    char uart_buf[50];
     int print_len;
 
     va_list args;
