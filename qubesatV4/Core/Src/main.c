@@ -193,10 +193,11 @@ int main(void) {
                     measure_at_frequency(set_freq) / measure_at_frequency(1500);
             }
             contrast_arr[j] = (uint16_t)(cur_sum / samples_per_freq);
+            printf_to_uart("%d\n", contrast_arr[j]);
         }
         // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
         //   HAL_MAX_DELAY); // for production
-        print_data_to_uart(contrast_arr, contrast_arr_len);  // for testing
+        // print_data_to_uart(contrast_arr, contrast_arr_len);  // for testing
     }
 
     // uint16_t *data_array = (uint16_t*) malloc(3000 * sizeof(uint16_t));
