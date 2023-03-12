@@ -209,13 +209,17 @@ void measure_at_frequency(int frequency) {
 }
 
 void printf_to_uart(char *format, ...) {
-    char uart_buf[50];
-    char uart_buf_len;
+    char print_buf[100]; // allocate a larger buffer
+    int print_len;
 
     va_list args;
     va_start(args, format);
-    vsnprintf(uart_buf, sizeof(uart_buf), format, args);
+    print_len = vsnprintf(print_buf, sizeof(print_buf), format, args);
     va_end(args);
+
+    // copy the relevant portion of the print buffer to uart buffer
+    int uart_buf_len = (print_len > 50) ? 50 : print_len;
+    memcpy(uart_buf, print_buf, uart_buf_len);
 
     HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
                       HAL_MAX_DELAY);
