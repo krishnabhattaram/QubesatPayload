@@ -173,8 +173,8 @@ int main(void) {
     int step_size = (end_frequency - start_frequency) / freq_steps;
     int set_freq;
 
-    int contrast_arr_len = freq_steps * sizeof(uint16_t);
-    uint16_t *contrast_arr;
+    int contrast_arr_len = freq_steps * sizeof(unsigned);
+    unsigned *contrast_arr;
     double cur_sum;
     /* Infinite loop */
 
@@ -183,7 +183,7 @@ int main(void) {
     // int ms1 = HAL_GetTick();
     for (unsigned i = 0; i < num_cycles; i++) {
         set_freq = start_frequency;
-        contrast_arr = (uint16_t *)malloc(contrast_arr_len);
+        contrast_arr = (unsigned *)malloc(contrast_arr_len);
         for (unsigned j = 0; set_freq <= end_frequency; j++) {
             set_freq += step_size;
             cur_sum = 0;
@@ -192,7 +192,7 @@ int main(void) {
                 cur_sum +=
                     measure_at_frequency(set_freq) / measure_at_frequency(1500);
             }
-            contrast_arr[j] = (uint16_t)(cur_sum * 10000 / samples_per_freq);
+            contrast_arr[j] = (unsigned)(cur_sum * 1e9 / samples_per_freq);
         }
         // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
         //   HAL_MAX_DELAY); // for production
@@ -245,7 +245,7 @@ void printf_to_uart(char *format, ...) {
 }
 
 /* Prints 16-bit int array to UART with newlines in between. */
-void print_data_to_uart(uint16_t *data, int len) {
+void print_data_to_uart(unsigned *data, int len) {
     unsigned MAX_INTS_PER_TRANSMIT = 30; // pulled this out my ass ngl
 
     char fmt[50];   // Create a format string buffer
