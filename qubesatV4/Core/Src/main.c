@@ -257,6 +257,8 @@ void print_data_to_uart(unsigned *data, int len) {
     char uart_buf[500];
 
     for (unsigned printed = 0; printed < len; printed += MAX_INTS_PER_TRANSMIT) {
+        for (unsigned i = 0; i < 500; i++) buf[i] = 0;
+        
         int l = 0;  // Keep track of the length of the formatted string
         int n;  // Keep track of the number of characters added to the formatted
                 // string
