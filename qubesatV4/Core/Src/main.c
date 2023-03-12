@@ -250,6 +250,7 @@ void print_data_to_uart(uint16_t *data, int len) {
 
     char fmt[50];   // Create a format string buffer
     char buf[500];  // Create a buffer for the formatted string
+    char uart_buf[500];
 
     for (unsigned printed = 0; printed < len; printed += MAX_INTS_PER_TRANSMIT) {
         int l = 0;  // Keep track of the length of the formatted string
@@ -273,8 +274,11 @@ void print_data_to_uart(uint16_t *data, int len) {
             l += n;
         }
 
+        int uart_buf_len = (l > 500) ? 500 : l;
+        memcpy(uart_buf, buf, uart_buf_len);
+
         // Print the formatted string
-        HAL_UART_Transmit(&huart2, (uint8_t *)buf, 500,
+        HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
                       HAL_MAX_DELAY);
     }
 }
