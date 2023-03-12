@@ -163,21 +163,32 @@ int main(void) {
     int start_frequency = 2700;
     int end_frequency = 3000;
     int step_size = (end_frequency - start_frequency) / freq_steps;
+    int set_freq;
 
+    int contrast_arr_len = freq_steps * sizeof(uint16_t);
+    uint16_t *contrast_arr;
+    double cur_sum;
     /* Infinite loop */
 
     /* USER CODE BEGIN WHILE */
 
     // int ms1 = HAL_GetTick();
-    for (unsigned j = 0; j < num_cycles; j++) {
-        for (int set_freq = start_frequency; set_freq <= end_frequency;
-             set_freq += step_size) {
+    for (unsigned i = 0; i < num_cycles; i++) {
+        set_freq = start_frequency;
+        contrast_arr = (uint16_t *)malloc(contrast_arr_len);
+        for (int j = 0; set_freq <= end_frequency; j++) {
+            set_freq += step_size;
+            cur_sum = 0;
             for (unsigned sample_count = 0; sample_count < samples_per_freq;
                  sample_count++) {
-                measure_at_frequency(set_freq);
-                measure_at_frequency(1500);
+                cur_sum +=
+                    measure_at_frequency(set_freq) / measure_at_frequency(1500);
             }
+            contrast_arr[j] = (uint16_t)(cur_sum / samples_per_freq);
         }
+        // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
+        //   HAL_MAX_DELAY); // for production
+        print_data_to_uart(contrast_arr, contrast_arr_len);  // for testing
     }
 
     // uint16_t *data_array = (uint16_t*) malloc(3000 * sizeof(uint16_t));
@@ -194,22 +205,20 @@ int main(void) {
     /* USER CODE END 3 */
 }
 
-void measure_at_frequency(int frequency) {
+double measure_at_frequency(int frequency) {
     Set_VCO_Frequency(frequency);
-
-    uint16_t photodiode_in;
 
     HAL_ADC_Start(&hadc);
     HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
-    photodiode_in = HAL_ADC_GetValue(&hadc);
+    return (double)HAL_ADC_GetValue(&hadc);
 
-    // Convert to string and print
-    printf_to_uart("%hu %d %d\r\n", photodiode_in, frequency,
-                   frequency == 1500);
+    // // Convert to string and print
+    // printf_to_uart("%hu %d %d\r\n", photodiode_in, frequency,
+    //                frequency == 1500);
 }
 
 void printf_to_uart(char *format, ...) {
-    char print_buf[100]; // allocate a larger buffer
+    char print_buf[100];  // allocate a larger buffer
     char uart_buf[50];
     int print_len;
 
@@ -225,6 +234,41 @@ void printf_to_uart(char *format, ...) {
     HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
                       HAL_MAX_DELAY);
 }
+
+/* Prints 16-bit int array to UART with newlines in between. */
+void print_data_to_uart(uint16_t *data, int len) {
+    unsigned MAX_INTS_PER_TRANSMIT = 30; // pulled this out my ass ngl
+
+    char fmt[50];   // Create a format string buffer
+    char buf[500];  // Create a buffer for the formatted string
+
+    for (unsigned printed = 0; printed < len; printed += MAX_INTS_PER_TRANSMIT) {
+        int l = 0;  // Keep track of the length of the formatted string
+        int n;  // Keep track of the number of characters added to the formatted
+                // string
+
+        // Build the format string with %d and delimiter
+        snprintf(fmt, sizeof(fmt), "%%d%s", "\r\n");
+
+        // Add each array element to the formatted string
+        unsigned to_transmit = MAX_INTS_PER_TRANSMIT;
+        if (len - printed < MAX_INTS_PER_TRANSMIT) {
+            to_transmit = len - printed;
+        }
+        for (unsigned i = 0; i < to_transmit; i++) {
+            n = snprintf(buf + l, sizeof(buf) - l, fmt, data[i]);
+            if (n < 0 || l + n >= sizeof(buf)) {
+                // Error handling: buffer overflow or snprintf error
+                return;
+            }
+            l += n;
+        }
+
+        // Print the formatted string
+        printf_to_uart("%s", buf);
+    }
+}
+
 /**
 
   * @brief System Clock Configuration
