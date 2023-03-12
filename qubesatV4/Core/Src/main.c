@@ -231,6 +231,7 @@ void printf_to_uart(char *format, ...) {
     char print_buf[100];  // allocate a larger buffer
     for (unsigned i = 0; i < 100; i++) print_buf[i] = 0;
     char uart_buf[50];
+    for (unsigned i = 0; i < 50; i++) uart_buf[i] = 0;
     int print_len;
 
     va_list args;
@@ -258,7 +259,8 @@ void print_data_to_uart(unsigned *data, int len) {
 
     for (unsigned printed = 0; printed < len; printed += MAX_INTS_PER_TRANSMIT) {
         for (unsigned i = 0; i < 500; i++) buf[i] = 0;
-        
+        for (unsigned i = 0; i < 500; i++) uart_buf[i] = 0;
+
         int l = 0;  // Keep track of the length of the formatted string
         int n;  // Keep track of the number of characters added to the formatted
                 // string
