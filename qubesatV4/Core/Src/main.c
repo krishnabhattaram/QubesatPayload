@@ -164,39 +164,26 @@ int main(void) {
     // Set_VCO_Out_Divider(20);
 
     /* USER CODE END 2 */
+    int SET_FREQUENCY = 2860; /* In MHz*/
 
-    int num_cycles = 1;
     int samples_per_freq = 100;
-    int freq_steps = 100;
-    int start_frequency = 2700;
-    int end_frequency = 3000;
-    int step_size = (end_frequency - start_frequency) / freq_steps;
-    int set_freq;
 
-    int contrast_arr_len = freq_steps * sizeof(unsigned);
-    unsigned *contrast_arr;
     double cur_sum;
+    unsigned contrast_val;
     /* Infinite loop */
 
     /* USER CODE BEGIN WHILE */
 
     // int ms1 = HAL_GetTick();
-    for (unsigned i = 0; i < num_cycles; i++) {
-        set_freq = start_frequency;
-        contrast_arr = (unsigned *)malloc(contrast_arr_len);
-        for (unsigned j = 0; set_freq <= end_frequency; j++) {
-            set_freq += step_size;
-            cur_sum = 0;
-            for (unsigned sample_count = 0; sample_count < samples_per_freq;
-                 sample_count++) {
-                cur_sum +=
-                    measure_at_frequency(set_freq) / measure_at_frequency(1500);
-            }
-            contrast_arr[j] = (unsigned)(cur_sum * 1e9 / samples_per_freq);
+    while (1) {
+        cur_sum = 0;
+        for (unsigned sample_count = 0; sample_count < samples_per_freq;
+             sample_count++) {
+            cur_sum +=
+                measure_at_frequency(SET_FREQUENCY) / measure_at_frequency(1500);
         }
-        // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
-        //   HAL_MAX_DELAY); // for production
-        print_data_to_uart(contrast_arr, contrast_arr_len);  // for testing
+        contrast_val = (unsigned)(cur_sum * 1e9 / samples_per_freq);
+        printf_to_uart("%d\n", contrast_val);  // for testing
     }
 
     // uint16_t *data_array = (uint16_t*) malloc(3000 * sizeof(uint16_t));
@@ -213,7 +200,8 @@ int main(void) {
     /* USER CODE END 3 */
 }
 
-/* Does the measurement at arbitrary frequency and returns the photodiode output. */
+/* Does the measurement at arbitrary frequency and returns the photodiode
+ * output. */
 double measure_at_frequency(int frequency) {
     Set_VCO_Frequency(frequency);
 
@@ -246,17 +234,18 @@ void printf_to_uart(char *format, ...) {
                       HAL_MAX_DELAY);
 }
 
-/* Prints 32-bit uint array to UART with newlines in between. 
+/* Prints 32-bit uint array to UART with newlines in between.
  * Prints 30 ints at a time. Slow but only used for testing.
-*/
+ */
 void print_data_to_uart(unsigned *data, int len) {
-    unsigned MAX_INTS_PER_TRANSMIT = 30; // pulled this out my ass ngl
+    unsigned MAX_INTS_PER_TRANSMIT = 30;  // pulled this out my ass ngl
 
     char fmt[50];   // Create a format string buffer
     char buf[500];  // Create a buffer for the formatted string
     char uart_buf[500];
 
-    for (unsigned printed = 0; printed < len; printed += MAX_INTS_PER_TRANSMIT) {
+    for (unsigned printed = 0; printed < len;
+         printed += MAX_INTS_PER_TRANSMIT) {
         int l = 0;  // Keep track of the length of the formatted string
         int n;  // Keep track of the number of characters added to the formatted
                 // string
@@ -283,7 +272,7 @@ void print_data_to_uart(unsigned *data, int len) {
 
         // Print the formatted string
         HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
-                      HAL_MAX_DELAY);
+                          HAL_MAX_DELAY);
     }
 }
 
