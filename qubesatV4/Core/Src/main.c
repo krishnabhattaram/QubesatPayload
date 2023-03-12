@@ -28,6 +28,7 @@
 
 /* USER CODE BEGIN Includes */
 
+#include <stdarg.h>
 #include <stdio.h>
 
 /* USER CODE END Includes */
@@ -133,9 +134,7 @@ int main(void) {
 
     HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
 
-    uart_buf_len = sprintf(uart_buf, "Starting SPI Test\r\n");
-    HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
-                      HAL_MAX_DELAY);
+    printf_to_uart("Starting SPI Test\r\n");
 
     HAL_Delay(500);  // Waiting for default register initialization of RF
                      // generator (synchronous turn on)
@@ -201,21 +200,28 @@ void measure_at_frequency(int frequency) {
     Set_VCO_Frequency(frequency);
 
     uint16_t photodiode_in;
-    char uart_buf[50];
-    char uart_buf_len;
 
     HAL_ADC_Start(&hadc);
     HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
     photodiode_in = HAL_ADC_GetValue(&hadc);
 
     // Convert to string and print
+    printf_to_uart("%hu %d %d\r\n", photodiode_in, frequency,
+                   frequency == 1500);
+}
 
-    uart_buf_len =
-        sprintf(uart_buf, "%hu %d %d\r\n", photodiode_in, set_freq, on_cycle);
+void printf_to_uart(char *format, ...) {
+    char uart_buf[50];
+    char uart_buf_len;
+
+    va_list args;
+    va_start(args, format);
+    uart_buf_len = sprintf(uart_buf, format, args);
+    va_end();
+
     HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
                       HAL_MAX_DELAY);
 }
-
 /**
 
   * @brief System Clock Configuration
