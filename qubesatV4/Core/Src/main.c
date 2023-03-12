@@ -184,7 +184,7 @@ int main(void) {
     for (unsigned i = 0; i < num_cycles; i++) {
         set_freq = start_frequency;
         contrast_arr = (uint16_t *)malloc(contrast_arr_len);
-        for (int j = 0; set_freq <= end_frequency; j++) {
+        for (unsigned j = 0; set_freq <= end_frequency; j++) {
             set_freq += step_size;
             cur_sum = 0;
             for (unsigned sample_count = 0; sample_count < samples_per_freq;
@@ -193,7 +193,7 @@ int main(void) {
                     measure_at_frequency(set_freq) / measure_at_frequency(1500);
             }
             contrast_arr[j] = (uint16_t)(cur_sum / samples_per_freq);
-            printf_to_uart("%d\n", contrast_arr[j]);
+            printf_to_uart("%d %f\n", contrast_arr[j], cur_sum);
         }
         // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
         //   HAL_MAX_DELAY); // for production
