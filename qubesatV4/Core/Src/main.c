@@ -183,7 +183,7 @@ int main(void) {
                 measure_at_frequency(SET_FREQUENCY) / measure_at_frequency(1500);
         }
         contrast_val = (unsigned)(cur_sum * 1e9 / samples_per_freq);
-        printf_to_uart("%d\n", contrast_val);  // for testing
+        printf_to_uart("%d\r\n", contrast_val);  // for testing
     }
 
     // uint16_t *data_array = (uint16_t*) malloc(3000 * sizeof(uint16_t));
