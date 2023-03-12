@@ -217,7 +217,7 @@ void printf_to_uart(char *format, ...) {
     va_list args;
     va_start(args, format);
     uart_buf_len = sprintf(uart_buf, format, args);
-    va_end();
+    va_end(args);
 
     HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
                       HAL_MAX_DELAY);
