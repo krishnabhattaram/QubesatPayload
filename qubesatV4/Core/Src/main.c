@@ -273,7 +273,8 @@ void print_data_to_uart(uint16_t *data, int len) {
         }
 
         // Print the formatted string
-        printf_to_uart("%s", buf);
+        HAL_UART_Transmit(&huart2, (uint8_t *)buf, uart_buf_len,
+                      HAL_MAX_DELAY);
     }
 }
 
