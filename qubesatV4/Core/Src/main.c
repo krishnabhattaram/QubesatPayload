@@ -75,6 +75,14 @@ static void MX_SPI1_Init(void);
 
 static void MX_ADC_Init(void);
 
+/* User defined functions */
+
+double measure_at_frequency(int frequency);
+
+void printf_to_uart(char *format, ...);
+
+void print_data_to_uart(uint16_t *data, int len);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
