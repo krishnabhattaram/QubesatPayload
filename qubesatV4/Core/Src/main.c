@@ -213,6 +213,7 @@ int main(void) {
     /* USER CODE END 3 */
 }
 
+/* Does the measurement at arbitrary frequency and returns the photodiode output. */
 double measure_at_frequency(int frequency) {
     Set_VCO_Frequency(frequency);
 
@@ -225,6 +226,7 @@ double measure_at_frequency(int frequency) {
     //                frequency == 1500);
 }
 
+/* Prints data to UART, usage is just like printf. */
 void printf_to_uart(char *format, ...) {
     char print_buf[100];  // allocate a larger buffer
     for (unsigned i = 0; i < 100; i++) print_buf[i] = 0;
@@ -244,7 +246,9 @@ void printf_to_uart(char *format, ...) {
                       HAL_MAX_DELAY);
 }
 
-/* Prints 16-bit int array to UART with newlines in between. */
+/* Prints 32-bit uint array to UART with newlines in between. 
+ * Prints 30 ints at a time. Slow but only used for testing.
+*/
 void print_data_to_uart(unsigned *data, int len) {
     unsigned MAX_INTS_PER_TRANSMIT = 30; // pulled this out my ass ngl
 
