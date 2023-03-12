@@ -81,7 +81,7 @@ double measure_at_frequency(int frequency);
 
 void printf_to_uart(char *format, ...);
 
-void print_data_to_uart(uint16_t *data, int len);
+void print_data_to_uart(unsigned *data, int len);
 
 /* USER CODE BEGIN PFP */
 
