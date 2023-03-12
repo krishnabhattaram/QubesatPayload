@@ -96,8 +96,6 @@ int main(void) {
     char spi_buf[20];
     uint16_t freq;
     uint16_t addr;
-    char uart_buf[50];
-    char uart_buf_len;
 
     /* USER CODE END 1 */
 
