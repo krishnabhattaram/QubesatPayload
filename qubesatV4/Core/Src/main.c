@@ -164,7 +164,7 @@ int main(void) {
     // Set_VCO_Out_Divider(20);
 
     /* USER CODE END 2 */
-    int SET_FREQUENCY = 2860; /* In MHz*/
+    int SET_FREQUENCY = 2860; /* In MHz */
 
     int samples_per_freq = 100;
 
