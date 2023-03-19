@@ -77,7 +77,7 @@ static void MX_ADC_Init(void);
 
 /* User defined functions */
 
-double measure_at_frequency(int frequency);
+int measure_at_frequency(int frequency);
 
 void printf_to_uart(char *format, ...);
 
@@ -100,10 +100,6 @@ void print_data_to_uart(unsigned *data, int len);
 
 int main(void) {
     /* USER CODE BEGIN 1 */
-
-    char spi_buf[20];
-    uint16_t freq;
-    uint16_t addr;
 
     /* USER CODE END 1 */
 
@@ -175,12 +171,13 @@ int main(void) {
 
     int contrast_arr_len = freq_steps * sizeof(unsigned);
     unsigned *contrast_arr;
-    double cur_sum;
+    float cur_sum;
     /* Infinite loop */
 
     /* USER CODE BEGIN WHILE */
 
     // int ms1 = HAL_GetTick();
+
     for (unsigned i = 0; i < num_cycles; i++) {
         set_freq = start_frequency;
         contrast_arr = (unsigned *)malloc(contrast_arr_len);
@@ -189,8 +186,8 @@ int main(void) {
             cur_sum = 0;
             for (unsigned sample_count = 0; sample_count < samples_per_freq;
                  sample_count++) {
-                cur_sum +=
-                    measure_at_frequency(set_freq) / measure_at_frequency(1500);
+                cur_sum += (float)measure_at_frequency(set_freq) /
+                           measure_at_frequency(1500);
             }
             contrast_arr[j] = (unsigned)(cur_sum * 1e9 / samples_per_freq);
         }
@@ -199,39 +196,26 @@ int main(void) {
         print_data_to_uart(contrast_arr, contrast_arr_len);  // for testing
     }
 
-    // uint16_t *data_array = (uint16_t*) malloc(3000 * sizeof(uint16_t));
-    // HAL_UART_Transmit(&huart2, (uint8_t*)data_array, 6000, HAL_MAX_DELAY);
-
     // int ms2 = HAL_GetTick();
-
-    // uart_buf_len = sprintf(uart_buf, "%d \r\n", ms2 - ms1);
-    // HAL_UART_Transmit(&huart2, (uint8_t*)uart_buf, uart_buf_len,
-    // HAL_MAX_DELAY);
+    // printf_to_uart("%d \r\n", ms2 - ms1);
 
     Set_VCO_Frequency(1500);
-
-    /* USER CODE END 3 */
 }
 
-/* Does the measurement at arbitrary frequency and returns the photodiode output. */
-double measure_at_frequency(int frequency) {
+/* Does the measurement at arbitrary frequency and returns the photodiode
+ * output. */
+int measure_at_frequency(int frequency) {
     Set_VCO_Frequency(frequency);
 
     HAL_ADC_Start(&hadc);
     HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
-    return (double)HAL_ADC_GetValue(&hadc);
-
-    // // Convert to string and print
-    // printf_to_uart("%hu %d %d\r\n", photodiode_in, frequency,
-    //                frequency == 1500);
+    return HAL_ADC_GetValue(&hadc);
 }
 
 /* Prints data to UART, usage is just like printf. */
 void printf_to_uart(char *format, ...) {
-    char print_buf[100];  // allocate a larger buffer
-    for (unsigned i = 0; i < 100; i++) print_buf[i] = 0;
-    char uart_buf[50];
-    for (unsigned i = 0; i < 50; i++) uart_buf[i] = 0;
+    char print_buf[100] = {0};  // allocate a larger buffer
+    char uart_buf[50] = {0};
     int print_len;
 
     va_list args;
@@ -247,17 +231,18 @@ void printf_to_uart(char *format, ...) {
                       HAL_MAX_DELAY);
 }
 
-/* Prints 32-bit uint array to UART with newlines in between. 
+/* Prints 32-bit uint array to UART with newlines in between.
  * Prints 30 ints at a time. Slow but only used for testing.
-*/
+ */
 void print_data_to_uart(unsigned *data, int len) {
-    unsigned MAX_INTS_PER_TRANSMIT = 30; // pulled this out my ass ngl
+    unsigned MAX_INTS_PER_TRANSMIT = 30;  // pulled this out my ass ngl
 
     char fmt[50];   // Create a format string buffer
     char buf[500];  // Create a buffer for the formatted string
     char uart_buf[500];
 
-    for (unsigned printed = 0; printed < len; printed += MAX_INTS_PER_TRANSMIT) {
+    for (unsigned printed = 0; printed < len;
+         printed += MAX_INTS_PER_TRANSMIT) {
         for (unsigned i = 0; i < 500; i++) buf[i] = 0;
         for (unsigned i = 0; i < 500; i++) uart_buf[i] = 0;
 
@@ -287,7 +272,7 @@ void print_data_to_uart(unsigned *data, int len) {
 
         // Print the formatted string
         HAL_UART_Transmit(&huart2, (uint8_t *)uart_buf, uart_buf_len,
-                      HAL_MAX_DELAY);
+                          HAL_MAX_DELAY);
     }
 }
 

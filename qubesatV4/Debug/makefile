@@ -60,8 +60,8 @@ all: main-build
 main-build: qubesatV4.elf secondary-outputs
 
 # Tool invocations
-qubesatV4.elf qubesatV4.map: $(OBJS) $(USER_OBJS) /Users/krishnabhattaram/STM32CubeIDE/workspace_1.9.0/qubesatV4/STM32L073RZTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "qubesatV4.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/Users/krishnabhattaram/STM32CubeIDE/workspace_1.9.0/qubesatV4/STM32L073RZTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="qubesatV4.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+qubesatV4.elf qubesatV4.map: $(OBJS) $(USER_OBJS) /Users/shami/Documents/QubesatPayload/qubesatV4/STM32L073RZTX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "qubesatV4.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/Users/shami/Documents/QubesatPayload/qubesatV4/STM32L073RZTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="qubesatV4.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
