@@ -1,0 +1,7 @@
+.metadata/
+.project
+qubesatV4/.settings
+qubesatV4/Debug
+qubesatV4/Drivers
+qubesatV4/.*
+qubesatV4/qubesatV4\ Debug.launch
