@@ -191,15 +191,15 @@ int main(void)
 
     /* USER CODE END 2 */
 
-    int num_cycles = 1;
+    int num_cycles = 10;
 
     int samples_per_freq = 100;
 
     int freq_steps = 100;
 
-    int start_frequency = 2700;
+    int start_frequency = 2800;
 
-    int end_frequency = 3000;
+    int end_frequency = 2950;
 
     int step_size = (end_frequency - start_frequency) / freq_steps;
 
@@ -370,7 +370,7 @@ void SystemClock_Config(void)
 }
 
 /**
-
+z
   * @brief ADC Initialization Function
 
   * @param None
