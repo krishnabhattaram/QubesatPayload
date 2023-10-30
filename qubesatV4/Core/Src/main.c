@@ -161,8 +161,8 @@ int main(void) {
 
     /* USER CODE END 2 */
 
-    int num_cycles = 1;
-    int samples_per_freq = 100;
+    int num_cycles = 10;
+    int samples_per_freq = 1;
     int freq_steps = 151;
     int start_frequency = 2800;
     int end_frequency = 2950;
@@ -190,10 +190,16 @@ int main(void) {
                            measure_at_frequency(1500);
             }
             contrast_arr[j] = (unsigned)(cur_sum * 1e9 / samples_per_freq);
+
+            printf_to_uart("%d\r\n", contrast_arr[j]);
         }
         // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
         //   HAL_MAX_DELAY); // for production
-        print_data_to_uart(contrast_arr, freq_steps);  // for testing
+
+        // print_data_to_uart(contrast_arr, freq_steps);  // for testing
+
+        // for (unsigned i = 0; i < freq_steps; i++)
+        //     printf_to_uart("%d\r\n", contrast_arr[i]);  // for testing
     }
 
     // int ms2 = HAL_GetTick();
@@ -209,6 +215,7 @@ int measure_at_frequency(int frequency) {
 
     HAL_ADC_Start(&hadc);
     HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
+    HAL_Delay(50);
     return HAL_ADC_GetValue(&hadc);
 }
 
