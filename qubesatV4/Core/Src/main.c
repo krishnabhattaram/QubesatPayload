@@ -163,10 +163,10 @@ int main(void) {
 
     int num_cycles = 1;
     int samples_per_freq = 100;
-    int freq_steps = 100;
-    int start_frequency = 2700;
-    int end_frequency = 3000;
-    int step_size = (end_frequency - start_frequency) / freq_steps;
+    int freq_steps = 151;
+    int start_frequency = 2800;
+    int end_frequency = 2950;
+    int step_size = (end_frequency - start_frequency + 1) / freq_steps;
     int set_freq;
 
     int contrast_arr_len = freq_steps * sizeof(unsigned);
@@ -193,7 +193,7 @@ int main(void) {
         }
         // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
         //   HAL_MAX_DELAY); // for production
-        print_data_to_uart(contrast_arr, contrast_arr_len);  // for testing
+        print_data_to_uart(contrast_arr, freq_steps);  // for testing
     }
 
     // int ms2 = HAL_GetTick();
