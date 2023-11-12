@@ -186,17 +186,17 @@ int main(void) {
             cur_sum = 0;
             for (unsigned sample_count = 0; sample_count < samples_per_freq;
                  sample_count++) {
-                cur_sum += (float)measure_at_frequency(set_freq) /
-                           measure_at_frequency(1500);
+                cur_sum += ((float)measure_at_frequency(set_freq) /
+                           measure_at_frequency(1500)) * 1e9;
             }
-            contrast_arr[j] = (unsigned)(cur_sum * 1e9 / samples_per_freq);
+            contrast_arr[j] = (unsigned)(cur_sum / samples_per_freq);
 
-            printf_to_uart("%d\r\n", contrast_arr[j]);
+            // printf_to_uart("%d\r\n", contrast_arr[j]);
         }
         // HAL_UART_Transmit(&huart2, (uint8_t *)contrast_arr, contrast_arr_len,
         //   HAL_MAX_DELAY); // for production
 
-        // print_data_to_uart(contrast_arr, freq_steps);  // for testing
+        print_data_to_uart(contrast_arr, freq_steps);  // for testing
 
         // for (unsigned i = 0; i < freq_steps; i++)
         //     printf_to_uart("%d\r\n", contrast_arr[i]);  // for testing
@@ -244,7 +244,6 @@ void printf_to_uart(char *format, ...) {
 void print_data_to_uart(unsigned *data, int len) {
     unsigned MAX_INTS_PER_TRANSMIT = 30;  // pulled this out my ass ngl
 
-    char fmt[50];   // Create a format string buffer
     char buf[500];  // Create a buffer for the formatted string
     char uart_buf[500];
 
@@ -257,16 +256,13 @@ void print_data_to_uart(unsigned *data, int len) {
         int n;  // Keep track of the number of characters added to the formatted
                 // string
 
-        // Build the format string with %d and delimiter
-        snprintf(fmt, sizeof(fmt), "%%d%s", "\r\n");
-
         // Add each array element to the formatted string
         unsigned to_transmit = MAX_INTS_PER_TRANSMIT;
         if (len - printed < MAX_INTS_PER_TRANSMIT) {
             to_transmit = len - printed;
         }
-        for (unsigned i = 0; i < to_transmit; i++) {
-            n = snprintf(buf + l, sizeof(buf) - l, fmt, data[i]);
+        for (unsigned i = printed; i < printed + to_transmit; i++) {
+            n = sprintf(buf + l, "%d\r\n", data[i]);
             if (n < 0 || l + n >= sizeof(buf)) {
                 // Error handling: buffer overflow or snprintf error
                 return;
