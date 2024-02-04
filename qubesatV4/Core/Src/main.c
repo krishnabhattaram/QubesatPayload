@@ -162,7 +162,7 @@ int main(void) {
     /* USER CODE END 2 */
 
     int num_cycles = 10;
-    int samples_per_freq = 1;
+    int samples_per_freq = 100;
     int freq_steps = 151;
     int start_frequency = 2800;
     int end_frequency = 2950;
@@ -171,7 +171,8 @@ int main(void) {
 
     int contrast_arr_len = freq_steps * sizeof(unsigned);
     unsigned *contrast_arr;
-    float cur_sum;
+    long unsigned high_sum;
+    long unsigned low_sum;
     /* Infinite loop */
 
     /* USER CODE BEGIN WHILE */
@@ -183,13 +184,20 @@ int main(void) {
         contrast_arr = (unsigned *)malloc(contrast_arr_len);
         for (unsigned j = 0; set_freq <= end_frequency; j++) {
             set_freq += step_size;
-            cur_sum = 0;
+            high_sum = 0;
+            low_sum = 0;
             for (unsigned sample_count = 0; sample_count < samples_per_freq;
                  sample_count++) {
-                cur_sum += ((float)measure_at_frequency(set_freq) /
-                           measure_at_frequency(1500)) * 1e9;
+                low_sum += measure_at_frequency(1500);
             }
-            contrast_arr[j] = (unsigned)(cur_sum / samples_per_freq);
+            Set_VCO_Frequency(set_freq);
+            HAL_Delay(10);
+            for (unsigned sample_count = 0; sample_count < samples_per_freq;
+                 sample_count++) {
+                high_sum += measure_at_frequency(set_freq);
+            }
+            Set_VCO_Frequency(1500);
+            contrast_arr[j] = (unsigned)(((float) high_sum / (samples_per_freq * low_sum)) * 1e9);
 
             // printf_to_uart("%d\r\n", contrast_arr[j]);
         }
@@ -215,7 +223,6 @@ int measure_at_frequency(int frequency) {
 
     HAL_ADC_Start(&hadc);
     HAL_ADC_PollForConversion(&hadc, HAL_MAX_DELAY);
-    HAL_Delay(50);
     return HAL_ADC_GetValue(&hadc);
 }
 
